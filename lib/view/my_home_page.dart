@@ -1,6 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_architectural_flow/core/api_data_holder.dart';
+import 'package:flutter_architectural_flow/viewmodel/app_data_state.dart';
+import 'package:flutter_architectural_flow/viewmodel/app_viewmodel.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -12,10 +17,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  ValueNotifier<int> _counter = ValueNotifier(0);
 
-  void _incrementCounter() {
-    _counter.value = _counter.value + 1;
+  late final AppViewModel _appViewModel;
+
+  @override
+  void initState() {
+    _appViewModel = context.read<AppViewModel>();
+    super.initState();
   }
 
   @override
@@ -25,30 +33,48 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            ValueListenableBuilder(
-              valueListenable: _counter,
-              builder: (context, value, widget) {
-                log("Is Notifying $value");
-                return Text(
-                  '$value',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                );
-              }
-            ),
-          ],
-        ),
+      body: BlocConsumer<AppViewModel, AppDataState>(
+        listener: (context, state){
+          log("$state");
+          if(state.apiResponseState == ApiState.failure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Failed to perform this action'),
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          return Stack(
+            alignment: Alignment.center,
+            children: [
+              if(state.apiResponseState == ApiState.loading) const Center(
+                child: CircularProgressIndicator(),
+              ),
+              if(state.apiResponseState == ApiState.success) ListView.builder(
+                  key: const Key("listView"),
+                  itemCount: state.appData?.dogBreedList?.length,
+                  itemBuilder: (context, pos) {
+                    return Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: ListTile(
+                          key: Key("listItem${pos+1}"),
+                          tileColor: Colors.blueGrey,
+                          title: Text(state.appData?.dogBreedList?[pos].dogBreedAttrs?.name ?? "No Name",
+                            style: const TextStyle(fontSize: 24),
+                          ),
+                        ));
+                  }),
+            ],
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        onPressed: () {
+          _appViewModel.getDogListData();
+        },
+        tooltip: 'Dog List Generate',
+        child: const Icon(Icons.generating_tokens_rounded),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
