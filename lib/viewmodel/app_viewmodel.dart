@@ -5,9 +5,11 @@ import 'package:flutter_architectural_flow/viewmodel/app_data_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AppViewModel extends Cubit<AppDataState> {
-  final AppRepository _repository = AppRepository();
-  AppViewModel(): super(const AppDataState(appData: null)) {
-    _repository.appDataStream.listen((apiData){
+  final AppRepository _repository;
+  AppViewModel({
+    required AppRepository repository
+  }): _repository = repository, super(const AppDataState(appData: null)) {
+    repository.appDataStream.listen((apiData){
       emit(state.copyWith(
         appData: DogBreedListResponse.fromJson(apiData.apiResponseData ?? {}),
         errorMessage: apiData.errorMessage,
