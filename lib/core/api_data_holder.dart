@@ -2,9 +2,8 @@ import 'package:equatable/equatable.dart';
 
 typedef OnFailureCallback = void Function(int statusCode, String? errorMessage);
 
-class ApiDataHolder extends Equatable{
-  Map<String, dynamic>? _apiResponseData;
-//  OnFailureCallback? _onFailureCallback;
+class ApiDataHolder<T> extends Equatable{
+  T? _apiResponseData;
   int? _errorCode;
   String? _errorMessage;
 
@@ -12,10 +11,10 @@ class ApiDataHolder extends Equatable{
     return (_errorCode != null) ? true : false;
   }
 
-  setApiResponseData(Map<String, dynamic> data){
+  setApiResponseData(T? data){
     _apiResponseData = data;
   }
-  Map<String, dynamic>? get apiResponseData => _apiResponseData;
+  T? get apiResponseData => _apiResponseData;
 
   setErrorCode(int errorCode){
     _errorCode = errorCode;
@@ -29,11 +28,6 @@ class ApiDataHolder extends Equatable{
 
   @override
   List<Object?> get props => [_apiResponseData, _errorCode, _errorMessage];
-
-// setOnFailureCallback(OnFailureCallback callBack){
-//   _onFailureCallback = callBack;
-// }
-// OnFailureCallback? get onFailureCallback => _onFailureCallback;
 }
 
 enum ApiState {
