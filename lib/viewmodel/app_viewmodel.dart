@@ -11,7 +11,7 @@ class AppViewModel extends Cubit<AppDataState> {
   }): _repository = repository, super(const AppDataState(appData: null)) {
     repository.appDataStream.listen((apiData){
       emit(state.copyWith(
-        appData: DogBreedListResponse.fromJson(apiData.apiResponseData ?? {}),
+        appData: apiData.apiResponseData != null ? DogBreedListResponse.fromJson(apiData.apiResponseData ?? {}) : null,
         errorMessage: apiData.errorMessage,
         apiResponseState: apiData.errorMessage != null ? ApiState.failure : ApiState.success
       ));
