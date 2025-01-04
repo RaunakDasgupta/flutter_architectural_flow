@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_architectural_flow/core/api_data_holder.dart';
-import 'package:flutter_architectural_flow/data_classes/dog_breed_response.dart';
+import 'package:flutter_architectural_flow/data_classes/blog_data.dart';
 
 class AppDataState extends Equatable{
-  final DogBreedListResponse? appData;
+  final BlogData? appData;
   final ApiState apiResponseState;
   final String? errorMessage;
   const AppDataState({
@@ -13,7 +13,7 @@ class AppDataState extends Equatable{
   });
 
   AppDataState copyWith({
-    DogBreedListResponse? appData,
+    BlogData? appData,
     ApiState? apiResponseState,
     String? errorMessage
   }){

@@ -10,6 +10,11 @@ class AppRemoteDatasource {
 }): _apiService = apiService;
   final ApiService _apiService;
 
+  Future<ApiDataHolder> getBlogData() async {
+    final apiService = ApiService(dio: Dio(), baseUrl: AppBaseUrls.blogDataUrl);
+    return await apiService.get<text_response>(DogUrlPaths.blogDataJson);
+  }
+
   Future<ApiDataHolder> getDogListData() async {
     return await _apiService.get<json_response>(DogUrlPaths.getAllBreeds);
   }

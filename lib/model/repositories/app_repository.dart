@@ -12,9 +12,14 @@ class AppRepository {
   final StreamController<ApiDataHolder> _appDataController = StreamController<ApiDataHolder>();
   Stream<ApiDataHolder> get appDataStream => _appDataController.stream;
 
-  Future<void> getDogListData() async {
-    final apiDataHolder = await _remoteDatasource.getDogListData();
+  Future<void> getBlogData() async {
+    final apiDataHolder = await _remoteDatasource.getBlogData();
     _appDataController.add(apiDataHolder);
   }
+
+  // Future<void> getDogListData() async {
+  //   final apiDataHolder = await _remoteDatasource.getDogListData();
+  //   _appDataController.add(apiDataHolder);
+  // }
 
 }

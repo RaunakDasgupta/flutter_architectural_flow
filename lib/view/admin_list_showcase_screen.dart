@@ -1,70 +1,128 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_architectural_flow/core/api_data_holder.dart';
+import 'package:flutter_architectural_flow/core/constants.dart';
+import 'package:flutter_architectural_flow/data_classes/blog_data.dart';
 import 'package:flutter_architectural_flow/view/edit_dialog.dart';
+import 'package:flutter_architectural_flow/viewmodel/app_data_state.dart';
+import 'package:flutter_architectural_flow/viewmodel/app_viewmodel.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 class AdminListShowcaseScreen extends StatefulWidget {
   const AdminListShowcaseScreen({super.key});
 
   @override
-  State<AdminListShowcaseScreen> createState() => _AdminListShowcaseScreenState();
+  State<AdminListShowcaseScreen> createState() =>
+      _AdminListShowcaseScreenState();
 }
 
 class _AdminListShowcaseScreenState extends State<AdminListShowcaseScreen> {
-  ValueNotifier<bool> _isForIndia = ValueNotifier(false);
+  int _toggleIndex = 0;
+  late final AppViewModel _appViewModel;
+  List<Blog> _blogList = [];
+
+  @override
+  void initState() {
+    _appViewModel = context.read<AppViewModel>();
+    _appViewModel.getBlogData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Blogs to Showcase!"),
+        title: const Text("Blogs to Showcase!"),
         actions: [
-          ValueListenableBuilder(
-              valueListenable: _isForIndia,
-              builder: (context, isForIndia, child) {
-                return isForIndia ? const Text("India", style: TextStyle(fontWeight: FontWeight.bold),) : const Text("UK", style: TextStyle(fontWeight: FontWeight.bold),);
-              }
-          ),
-          const SizedBox(width: 16,),
-          ValueListenableBuilder(
-            valueListenable: _isForIndia,
-            builder: (context, isForIndia, child) {
-              return Switch(value: isForIndia, onChanged: (bool){
-                _isForIndia.value = bool;
+          ToggleSwitch(
+            initialLabelIndex: _toggleIndex,
+            totalSwitches: 2,
+            labels: const ['India', 'UK'],
+            onToggle: (index) {
+              setState(() {
+                _toggleIndex = index ?? 0;
+                switch(_toggleIndex){
+                  case 0:
+                    _blogList = _appViewModel.state.appData?.indiaBlogs ?? [];
+                    break;
+                  case 1:
+                    _blogList = _appViewModel.state.appData?.ukBlogs ?? [];
+                }
               });
-            }
+            },
           ),
-          const SizedBox(width: 16,),
+          const SizedBox(
+            width: 16,
+          ),
         ],
       ),
-      body: ListView.builder(
-          itemCount: 4,
-          itemBuilder: (context, pos){
-           return Padding(
-             padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-             child: ListTile(
-               tileColor: Colors.black12,
-               leading: Image.network("https://miro.medium.com/v2/resize:fit:1400/format:webp/1*Bhfzsp01NibPkNYmWy9YyA.png"),
-               title: Text("Top 10 Coroutine Mistakes We All Have Made as Android Developers", maxLines: 3, overflow: TextOverflow.ellipsis,),
-               subtitle: Text("Understanding and Avoiding Common Pitfalls in Asynchronous Programming with Kotlin Coroutines", maxLines: 4, overflow: TextOverflow.ellipsis,),
-               trailing: Row(
-                 mainAxisSize: MainAxisSize.min,
-                 children: [
-                   Column(
-                     mainAxisAlignment: MainAxisAlignment.center,
-                     children: [
-                       Text("Nov 3, 2024"),
-                       Text("Android")
-                     ],
-                   ),
-                   IconButton(onPressed: (){
-                     showEditDialog(context, "Edit Blog Details!");
-                   }, icon: Icon(Icons.edit)),
-                   IconButton(onPressed: (){}, icon: Icon(Icons.delete, color: Colors.redAccent,)),
-                 ],
-               ),
-             ),
-           );
-      }),
+      body: BlocConsumer<AppViewModel, AppDataState>(
+          listener: (context, state){
+            switch(_toggleIndex){
+              case 0:
+                _blogList = _appViewModel.state.appData?.indiaBlogs ?? [];
+                break;
+              case 1:
+                _blogList = _appViewModel.state.appData?.ukBlogs ?? [];
+            }
+            if(state.apiResponseState == ApiState.failure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Failed to perform this action'),
+                ),
+              );
+            }
+          },
+        builder: (context, state) {
+          return ListView.builder(
+              itemCount: _blogList.length,
+              itemBuilder: (context, pos) {
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                  child: ListTile(
+                    tileColor: Colors.black12,
+                    leading: Image.network(
+                        _blogList[pos].bannerUrl ?? strConstant),
+                    title: Text(
+                      _blogList[pos].title ?? strConstant,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    subtitle: Text(
+                      _blogList[pos].shortDesc ?? strConstant,
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [Text(_blogList[pos].pubclicationDate ?? strConstant), Text(_blogList[pos].topic ?? strConstant)],
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              showEditDialog(context, "Edit Blog Details!");
+                            },
+                            icon: Icon(Icons.edit)),
+                        IconButton(
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.delete,
+                              color: Colors.redAccent,
+                            )),
+                      ],
+                    ),
+                  ),
+                );
+              });
+        }
+      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){
+        onPressed: () {
           showEditDialog(context, "Add New Blog!");
         },
         child: Icon(Icons.add),

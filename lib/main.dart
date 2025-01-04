@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_architectural_flow/core_locator.dart';
 import 'package:flutter_architectural_flow/view/admin_list_showcase_screen.dart';
-import 'package:flutter_architectural_flow/view/my_home_page.dart';
 import 'package:flutter_architectural_flow/viewmodel/app_viewmodel.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

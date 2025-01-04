@@ -38,7 +38,7 @@ showEditDialog(
             _buildTextField("Blog URL", controller: blogUrlController),
             const SizedBox(height: 20),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 ElevatedButton(
                   onPressed: () {
@@ -49,6 +49,7 @@ showEditDialog(
                   ),
                   child: const Text("Cancel", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
                 ),
+                SizedBox(width: 16,),
                 ElevatedButton(
                   onPressed: () {
                     // Handle form submission
