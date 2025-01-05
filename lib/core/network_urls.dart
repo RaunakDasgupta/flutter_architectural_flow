@@ -1,11 +1,12 @@
 class AppBaseUrls {
   AppBaseUrls._();
-  static String dogBaseUrl = "https://dogapi.dog/api/v2";
+  static String blogJsonContentBaseUrl = "https://api.github.com/repos/HeySitam/MovieFreaks";
   static String blogDataUrl = "https://raw.githubusercontent.com/HeySitam/MovieFreaks/refs/heads/movie_app";
 }
 
-class DogUrlPaths {
-  DogUrlPaths._();
-  static String getAllBreeds = '/breeds';
+class BlogUrlPaths {
+  BlogUrlPaths._();
   static String blogDataJson = '/demo.json';
+  static String blogJsonContentUpdatePath = '/contents/demo.json';
+  static String blogJsonContentInfoPath = '/contents/demo.json';
 }

@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_architectural_flow/core_locator.dart';
 import 'package:flutter_architectural_flow/view/admin_list_showcase_screen.dart';
-import 'package:flutter_architectural_flow/viewmodel/app_viewmodel.dart';
+import 'package:flutter_architectural_flow/viewmodel/blog_content_viewmodel.dart';
+import 'package:flutter_architectural_flow/viewmodel/blog_data_viewmodel.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
   await setUpCoreLocator();
-  runApp(BlocProvider<AppViewModel>(
-     create: (BuildContext context) {
-       return coreLocator.get<AppViewModel>();
-     },
-    child: const MyApp(),
-  ));
+  runApp(MultiBlocProvider(providers: [
+    BlocProvider<BlogDataViewModel>(
+      create: (BuildContext context) {
+        return coreLocator.get<BlogDataViewModel>();
+      },
+    ),
+    BlocProvider<BlogContentViewModel>(
+      create: (BuildContext context) {
+        return coreLocator.get<BlogContentViewModel>();
+      },
+    ),
+  ], child: const MyApp(),));
 }
 
 class MyApp extends StatelessWidget {

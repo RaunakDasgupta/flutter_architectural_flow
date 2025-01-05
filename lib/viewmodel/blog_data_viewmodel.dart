@@ -3,15 +3,15 @@ import 'dart:convert';
 import 'package:flutter_architectural_flow/core/api_data_holder.dart';
 import 'package:flutter_architectural_flow/data_classes/blog_data.dart';
 import 'package:flutter_architectural_flow/model/repositories/app_repository.dart';
-import 'package:flutter_architectural_flow/viewmodel/app_data_state.dart';
+import 'package:flutter_architectural_flow/viewmodel/state/blog_data_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AppViewModel extends Cubit<AppDataState> {
+class BlogDataViewModel extends Cubit<BlogDataState> {
   final AppRepository _repository;
-  AppViewModel({
+  BlogDataViewModel({
     required AppRepository repository
-  }): _repository = repository, super(const AppDataState(appData: null)) {
-    repository.appDataStream.listen((apiData){
+  }): _repository = repository, super(const BlogDataState(appData: null)) {
+    repository.blogDataStream.listen((apiData){
       emit(state.copyWith(
         appData: apiData.apiResponseData != null ? BlogData.fromJson(json.decode(apiData.apiResponseData ?? "")) : null,
         errorMessage: apiData.errorMessage,
@@ -19,11 +19,6 @@ class AppViewModel extends Cubit<AppDataState> {
       ));
     });
   }
-
-  // Future<void> getDogListData() async {
-  //    emit(state.copyWith(apiResponseState: ApiState.loading));
-  //    await _repository.getDogListData();
-  // }
 
   Future<void> getBlogData() async {
     emit(state.copyWith(apiResponseState: ApiState.loading));

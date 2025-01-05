@@ -4,6 +4,7 @@ showEditDialog(
     BuildContext context,
     String title,
     {TextEditingController? imageUrlController,
+      VoidCallback? onSubmitButtonClick,
       TextEditingController? titleController,
       TextEditingController? descriptionController,
       TextEditingController? dateController,
@@ -17,58 +18,51 @@ showEditDialog(
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            _buildTextField("Image URL", controller: imageUrlController),
-            _buildTextField("Title", controller: titleController),
-            _buildTextField("Description", controller: descriptionController),
-            _buildTextField("Date",
-                controller: dateController,
-                inputType: TextInputType.datetime),
-            _buildTextField("Topic", controller: topicController),
-            _buildTextField("Blog URL", controller: blogUrlController),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Close dialog
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
+              const SizedBox(height: 16),
+              _buildTextField("Banner URL", controller: imageUrlController),
+              _buildTextField("Blog Title", controller: titleController),
+              _buildTextField("Short Description", controller: descriptionController),
+              _buildTextField("Published Date",
+                  controller: dateController,
+                  inputType: TextInputType.datetime),
+              _buildTextField("Topic", controller: topicController),
+              _buildTextField("Blog URL", controller: blogUrlController),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context); // Close dialog
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
+                    child: const Text("Cancel", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
                   ),
-                  child: const Text("Cancel", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-                ),
-                SizedBox(width: 16,),
-                ElevatedButton(
-                  onPressed: () {
-                    // Handle form submission
-                    print("Image URL: ${imageUrlController?.text}");
-                    print("Title: ${titleController?.text}");
-                    print("Description: ${descriptionController?.text}");
-                    print("Date: ${dateController?.text}");
-                    print("Topic: ${topicController?.text}");
-                    print("Blog URL: ${blogUrlController?.text}");
-                    Navigator.pop(context); // Close dialog
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+                  const SizedBox(width: 16,),
+                  ElevatedButton(
+                    onPressed: onSubmitButtonClick,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                    ),
+                    child: const Text("Submit", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
                   ),
-                  child: const Text("Submit", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     ),
@@ -82,9 +76,10 @@ Widget _buildTextField(
     }) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 8.0),
-    child: TextField(
+    child: TextFormField(
       controller: controller,
       keyboardType: inputType,
+    //  initialValue: controller?.text ?? "",
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(),

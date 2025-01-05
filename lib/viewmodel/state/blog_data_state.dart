@@ -2,22 +2,22 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_architectural_flow/core/api_data_holder.dart';
 import 'package:flutter_architectural_flow/data_classes/blog_data.dart';
 
-class AppDataState extends Equatable{
+class BlogDataState extends Equatable{
   final BlogData? appData;
   final ApiState apiResponseState;
   final String? errorMessage;
-  const AppDataState({
+  const BlogDataState({
     required this.appData,
     this.apiResponseState = ApiState.idle,
     this.errorMessage
   });
 
-  AppDataState copyWith({
+  BlogDataState copyWith({
     BlogData? appData,
     ApiState? apiResponseState,
     String? errorMessage
   }){
-    return AppDataState(
+    return BlogDataState(
       appData: appData,
       apiResponseState: apiResponseState ?? ApiState.idle,
       errorMessage: errorMessage

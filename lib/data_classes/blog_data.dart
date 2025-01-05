@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
 
 class BlogData extends Equatable {
-  final List<Blog>? indiaBlogs;
-  final List<Blog>? ukBlogs;
-  final String? dashboardUrl;
+  List<Blog>? indiaBlogs;
+  List<Blog>? ukBlogs;
+  String? dashboardUrl;
 
   BlogData({
     this.indiaBlogs,
@@ -36,12 +36,12 @@ class BlogData extends Equatable {
 }
 
 class Blog extends Equatable {
-  final String? title;
-  final String? shortDesc;
-  final String? bannerUrl;
-  final String? blogUrl;
-  final String? pubclicationDate;
-  final String? topic;
+  String? title;
+  String? shortDesc;
+  String? bannerUrl;
+  String? blogUrl;
+  String? pubclicationDate;
+  String? topic;
 
   Blog({
     this.title,

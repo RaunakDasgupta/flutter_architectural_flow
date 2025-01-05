@@ -83,26 +83,33 @@ class ApiService {
   }
 
   // // Put:-----------------------------------------------------------------------
-  // Future<Response<T>> put<T>(
-  //     String path, {
-  //       dynamic data,
-  //       Map<String, dynamic>? queryParameters,
-  //       Options? options,
-  //       CancelToken? cancelToken,
-  //       void Function(int, int)? onSendProgress,
-  //       void Function(int, int)? onReceiveProgress,
-  //     }) async {
-  //   final response = await _dio.put<T>(
-  //     path,
-  //     data: data,
-  //     queryParameters: queryParameters,
-  //     options: options,
-  //     cancelToken: cancelToken,
-  //     onSendProgress: onSendProgress,
-  //     onReceiveProgress: onReceiveProgress,
-  //   );
-  //   return response;
-  // }
+  Future<ApiDataHolder<T>> put<T>(
+      String path, {
+        dynamic data,
+        Map<String, dynamic>? queryParameters,
+        Options? options,
+        CancelToken? cancelToken,
+        void Function(int, int)? onSendProgress,
+        void Function(int, int)? onReceiveProgress,
+      }) async {
+    final apiDataHolder = ApiDataHolder<T>();
+    try {
+      final response = await _dio.put(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
+      );
+      apiDataHolder.setApiResponseData(response.data);
+    } on DioException catch (e) {
+      apiDataHolder.setErrorCode(e.response?.statusCode ?? -1);
+      apiDataHolder.setErrorMessage(e.message ?? "Something went wrong!");
+    }
+    return apiDataHolder;
+  }
   //
   // // Delete:--------------------------------------------------------------------
   // Future<Response<T>> delete<T>(
