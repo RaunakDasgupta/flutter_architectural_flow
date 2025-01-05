@@ -14,14 +14,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class AdminListShowcaseScreen extends StatefulWidget {
-  const AdminListShowcaseScreen({super.key});
-
+  const AdminListShowcaseScreen({super.key, this.restorationId});
+  final String? restorationId;
   @override
   State<AdminListShowcaseScreen> createState() =>
       _AdminListShowcaseScreenState();
 }
 
-class _AdminListShowcaseScreenState extends State<AdminListShowcaseScreen> {
+class _AdminListShowcaseScreenState extends State<AdminListShowcaseScreen> with RestorationMixin {
   int _toggleIndex = 0;
   late final BlogDataViewModel _appViewModel;
   late final BlogContentViewModel _blogContentViewModel;
@@ -107,6 +107,20 @@ class _AdminListShowcaseScreenState extends State<AdminListShowcaseScreen> {
     String sanitizedContentJson = sanitizeJson(contentString);
     _blogContentViewModel.updateBlogJsonContent(sanitizedContentJson);
     Navigator.pop(context);
+  }
+
+  _onCancelButtonClick(){
+    _imageUrlController.text = "";
+    _titleController.text = "";
+    _descriptionController.text = "";
+    _dateController.text = "";
+    _topicController.text = "";
+    _blogUrlController.text = "";
+    Navigator.pop(context);
+  }
+
+  _onDateSelectionTap(){
+    _restorableDatePickerRouteFuture.present();
   }
 
   @override
@@ -235,7 +249,9 @@ class _AdminListShowcaseScreenState extends State<AdminListShowcaseScreen> {
                                       blogUrlController: _blogUrlController,
                                       onSubmitButtonClick: (){
                                         _onSubmitButtonClickForEdit(pos);
-                                      }
+                                      },
+                                    onCancelButtonClick: _onCancelButtonClick,
+                                    onDateSelectionTap: _onDateSelectionTap
                                   );
                                 },
                                 icon: const Icon(Icons.edit)),
@@ -280,11 +296,69 @@ class _AdminListShowcaseScreenState extends State<AdminListShowcaseScreen> {
               blogUrlController: _blogUrlController,
             onSubmitButtonClick: (){
               _onSubmitButtonClickForAdd();
-            }
+            },
+            onCancelButtonClick: _onCancelButtonClick,
+            onDateSelectionTap: _onDateSelectionTap
           );
         },
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  @override
+  // TODO: implement restorationId
+  String? get restorationId => widget.restorationId;
+
+  final RestorableDateTime _selectedDate =
+  RestorableDateTime(DateTime(2021, 7, 25));
+  late final RestorableRouteFuture<DateTime?> _restorableDatePickerRouteFuture =
+  RestorableRouteFuture<DateTime?>(
+    onComplete: _selectDate,
+    onPresent: (NavigatorState navigator, Object? arguments) {
+      return navigator.restorablePush(
+        _datePickerRoute,
+        arguments: _selectedDate.value.millisecondsSinceEpoch,
+      );
+    },
+  );
+
+  @pragma('vm:entry-point')
+  static Route<DateTime> _datePickerRoute(
+      BuildContext context,
+      Object? arguments,
+      ) {
+    return DialogRoute<DateTime>(
+      context: context,
+      builder: (BuildContext context) {
+        return DatePickerDialog(
+          restorationId: 'date_picker_dialog',
+          initialEntryMode: DatePickerEntryMode.calendarOnly,
+          initialDate: DateTime.fromMillisecondsSinceEpoch(arguments! as int),
+          firstDate: DateTime(2021),
+          lastDate: DateTime.now(),
+        );
+      },
+    );
+  }
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(_selectedDate, 'selected_date');
+    registerForRestoration(
+        _restorableDatePickerRouteFuture, 'date_picker_route_future');
+  }
+
+  void _selectDate(DateTime? newSelectedDate) {
+    if (newSelectedDate != null) {
+      setState(() {
+        _selectedDate.value = newSelectedDate;
+        _dateController.text = "${newSelectedDate.day.toString().padLeft(2,'0')}-${newSelectedDate.month.toString().padLeft(2,'0')}-${newSelectedDate.year}";
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              'Selected: ${_selectedDate.value.day}/${_selectedDate.value.month}/${_selectedDate.value.year}'),
+        ));
+      });
+    }
   }
 }

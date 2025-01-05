@@ -5,6 +5,8 @@ showEditDialog(
     String title,
     {TextEditingController? imageUrlController,
       VoidCallback? onSubmitButtonClick,
+      VoidCallback? onCancelButtonClick,
+      VoidCallback? onDateSelectionTap,
       TextEditingController? titleController,
       TextEditingController? descriptionController,
       TextEditingController? dateController,
@@ -35,6 +37,7 @@ showEditDialog(
               _buildTextField("Short Description", controller: descriptionController),
               _buildTextField("Published Date",
                   controller: dateController,
+                  onTap: onDateSelectionTap,
                   inputType: TextInputType.datetime),
               _buildTextField("Topic", controller: topicController),
               _buildTextField("Blog URL", controller: blogUrlController),
@@ -43,9 +46,7 @@ showEditDialog(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context); // Close dialog
-                    },
+                    onPressed: onCancelButtonClick,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                     ),
@@ -72,6 +73,7 @@ showEditDialog(
 Widget _buildTextField(
     String label, {
       TextEditingController? controller,
+      VoidCallback? onTap,
       TextInputType inputType = TextInputType.text,
     }) {
   return Padding(
@@ -79,6 +81,7 @@ Widget _buildTextField(
     child: TextFormField(
       controller: controller,
       keyboardType: inputType,
+      onTap: onTap,
     //  initialValue: controller?.text ?? "",
       decoration: InputDecoration(
         labelText: label,

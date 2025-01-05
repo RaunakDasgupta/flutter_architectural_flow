@@ -37,7 +37,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: AdminListShowcaseScreen(),
+      restorationScopeId: 'app',
+      home: const AdminListShowcaseScreen(restorationId: 'main'),
     );
   }
 }
