@@ -11,9 +11,12 @@ showEditDialog(
       TextEditingController? descriptionController,
       TextEditingController? dateController,
       TextEditingController? topicController,
-      TextEditingController? blogUrlController}) {
+      TextEditingController? blogUrlController,
+      TextEditingController? sortOrderController
+    }) {
   return showDialog(
     context: context,
+    barrierDismissible: false,
     builder: (context) => Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
@@ -41,6 +44,7 @@ showEditDialog(
                   inputType: TextInputType.datetime),
               _buildTextField("Topic", controller: topicController),
               _buildTextField("Blog URL", controller: blogUrlController),
+              _buildTextField("Sort Order", controller: sortOrderController, inputType: TextInputType.number),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,

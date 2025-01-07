@@ -42,6 +42,7 @@ class Blog extends Equatable {
   String? blogUrl;
   String? pubclicationDate;
   String? topic;
+  int? sortOrder;
 
   Blog({
     this.title,
@@ -50,6 +51,7 @@ class Blog extends Equatable {
     this.blogUrl,
     this.pubclicationDate,
     this.topic,
+    this.sortOrder
   });
 
   factory Blog.fromJson(Map<String, dynamic> json) {
@@ -60,6 +62,7 @@ class Blog extends Equatable {
       blogUrl: json['blogUrl'],
       pubclicationDate: json['pubclicationDate'],
       topic: json['topic'],
+      sortOrder: json['sortOrder']
     );
   }
 
@@ -71,9 +74,10 @@ class Blog extends Equatable {
       'blogUrl': blogUrl,
       'pubclicationDate': pubclicationDate,
       'topic': topic,
+      'sortOrder': sortOrder
     };
   }
 
   @override
-  List<Object?> get props => [title, shortDesc, bannerUrl, blogUrl, pubclicationDate, topic];
+  List<Object?> get props => [title, shortDesc, bannerUrl, blogUrl, pubclicationDate, topic, sortOrder];
 }

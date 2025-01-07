@@ -35,6 +35,7 @@ class _AdminListShowcaseScreenState extends State<AdminListShowcaseScreen> with 
   late final TextEditingController _dateController;
   late final TextEditingController _topicController;
   late final TextEditingController _blogUrlController;
+  late final TextEditingController _sortOrderController;
 
   @override
   void initState() {
@@ -48,6 +49,7 @@ class _AdminListShowcaseScreenState extends State<AdminListShowcaseScreen> with 
     _dateController = TextEditingController();
     _topicController = TextEditingController();
     _blogUrlController = TextEditingController();
+    _sortOrderController = TextEditingController();
     super.initState();
   }
 
@@ -60,6 +62,7 @@ class _AdminListShowcaseScreenState extends State<AdminListShowcaseScreen> with 
         _blogData?.indiaBlogs?[posIndex].pubclicationDate = _dateController.text;
         _blogData?.indiaBlogs?[posIndex].topic = _topicController.text;
         _blogData?.indiaBlogs?[posIndex].blogUrl = _blogUrlController.text;
+        _blogData?.indiaBlogs?[posIndex].sortOrder = int.tryParse(_sortOrderController.text) ?? -1;
         break;
       case 1:
         _blogData?.ukBlogs?[posIndex].bannerUrl = _imageUrlController.text;
@@ -68,9 +71,12 @@ class _AdminListShowcaseScreenState extends State<AdminListShowcaseScreen> with 
         _blogData?.ukBlogs?[posIndex].pubclicationDate = _dateController.text;
         _blogData?.ukBlogs?[posIndex].topic = _topicController.text;
         _blogData?.ukBlogs?[posIndex].blogUrl = _blogUrlController.text;
+        _blogData?.indiaBlogs?[posIndex].sortOrder = int.tryParse(_sortOrderController.text) ?? -1;
     }
     String contentString = _blogData?.toJson().toString() ?? "";
+    log("BlogData : $_blogData");
     String sanitizedContentJson = sanitizeJson(contentString);
+    log("BlogData : $sanitizedContentJson");
     _blogContentViewModel.updateBlogJsonContent(sanitizedContentJson);
     Navigator.pop(context);
   }
@@ -96,6 +102,7 @@ class _AdminListShowcaseScreenState extends State<AdminListShowcaseScreen> with 
     newBlog.pubclicationDate = _dateController.text;
     newBlog.topic = _topicController.text;
     newBlog.blogUrl = _blogUrlController.text;
+    newBlog.sortOrder = int.tryParse(_sortOrderController.text) ?? -1;
     switch(_toggleIndex){
       case 0:
         _blogData?.indiaBlogs?.add(newBlog);
@@ -116,6 +123,7 @@ class _AdminListShowcaseScreenState extends State<AdminListShowcaseScreen> with 
     _dateController.text = "";
     _topicController.text = "";
     _blogUrlController.text = "";
+    _sortOrderController.text = "";
     Navigator.pop(context);
   }
 
@@ -131,6 +139,7 @@ class _AdminListShowcaseScreenState extends State<AdminListShowcaseScreen> with 
     _dateController.dispose();
     _topicController.dispose();
     _blogUrlController.dispose();
+    _sortOrderController.dispose();
     super.dispose();
   }
 
@@ -239,6 +248,7 @@ class _AdminListShowcaseScreenState extends State<AdminListShowcaseScreen> with 
                                   _dateController.text = _blogList[pos].pubclicationDate ?? strConstant;
                                   _topicController.text = _blogList[pos].topic ?? strConstant;
                                   _blogUrlController.text = _blogList[pos].blogUrl ?? strConstant;
+                                  _sortOrderController.text = _blogList[pos].sortOrder.toString();
                                   showEditDialog(
                                       context, "Edit Blog Details!",
                                       imageUrlController: _imageUrlController,
@@ -247,6 +257,7 @@ class _AdminListShowcaseScreenState extends State<AdminListShowcaseScreen> with 
                                       dateController: _dateController,
                                       topicController: _topicController,
                                       blogUrlController: _blogUrlController,
+                                      sortOrderController: _sortOrderController,
                                       onSubmitButtonClick: (){
                                         _onSubmitButtonClickForEdit(pos);
                                       },
@@ -294,6 +305,7 @@ class _AdminListShowcaseScreenState extends State<AdminListShowcaseScreen> with 
               dateController: _dateController,
               topicController: _topicController,
               blogUrlController: _blogUrlController,
+              sortOrderController: _sortOrderController,
             onSubmitButtonClick: (){
               _onSubmitButtonClickForAdd();
             },
